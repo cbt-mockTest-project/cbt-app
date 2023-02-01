@@ -31,9 +31,11 @@ class _MainScreenState extends State<MainScreen> {
 
     final WebViewController controller =
         WebViewController.fromPlatformCreationParams(params);
+
     // #enddocregion platform_features
 
     controller
+      ..setUserAgent('random')
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
