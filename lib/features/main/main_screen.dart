@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moducbt/features/main/main_splash_screen.dart';
+import 'package:moducbt/features/main/widgets/app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -12,12 +14,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late final WebViewController _controller;
-
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
 
-    // #docregion platform_features
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
@@ -38,6 +39,11 @@ class _MainScreenState extends State<MainScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
+            if (progress == 100) {
+              setState(() {
+                isLoading = false;
+              });
+            }
             debugPrint('WebView is loading (progress : $progress%)');
           },
           onPageStarted: (String url) {
@@ -56,10 +62,10 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              debugPrint('blocking navigation to ${request.url}');
-              return NavigationDecision.prevent;
-            }
+            // if (request.url.startsWith('https://www.youtube.com/')) {
+            //   debugPrint('blocking navigation to ${request.url}');
+            //   return NavigationDecision.prevent;
+            // }
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
@@ -73,15 +79,13 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
       )
-      ..loadRequest(Uri.parse('https://flutter.dev'));
+      ..loadRequest(Uri.parse('https://moducbt.com'));
 
-    // #docregion platform_features
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
-    // #enddocregion platform_features
 
     _controller = controller;
   }
@@ -89,59 +93,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Flutter WebView example'),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
+        title: const Text('Moducbt'),
         actions: <Widget>[
           NavigationControls(webViewController: _controller),
         ],
       ),
-      body: WebViewWidget(controller: _controller),
-    );
-  }
-}
-
-class NavigationControls extends StatelessWidget {
-  const NavigationControls({super.key, required this.webViewController});
-
-  final WebViewController webViewController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () async {
-            if (await webViewController.canGoBack()) {
-              await webViewController.goBack();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No back history item')),
-              );
-              return;
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.arrow_forward_ios),
-          onPressed: () async {
-            if (await webViewController.canGoForward()) {
-              await webViewController.goForward();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No forward history item')),
-              );
-              return;
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.replay),
-          onPressed: () => webViewController.reload(),
-        ),
-      ],
+      body: isLoading
+          ? const SplashScreen()
+          : WebViewWidget(controller: _controller),
     );
   }
 }
