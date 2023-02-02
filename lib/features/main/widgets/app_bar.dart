@@ -11,6 +11,32 @@ class NavigationControls extends StatelessWidget {
     return Row(
       children: <Widget>[
         IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () async {
+            if (await webViewController.canGoBack()) {
+              await webViewController.goBack();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('No back history item')),
+              );
+              return;
+            }
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_forward_ios),
+          onPressed: () async {
+            if (await webViewController.canGoForward()) {
+              await webViewController.goForward();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('No forward history item')),
+              );
+              return;
+            }
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.replay),
           onPressed: () => webViewController.reload(),
         ),
