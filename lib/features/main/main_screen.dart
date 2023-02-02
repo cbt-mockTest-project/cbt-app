@@ -15,6 +15,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late final WebViewController _controller;
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -92,19 +93,31 @@ class _MainScreenState extends State<MainScreen> {
     _controller = controller;
   }
 
+  Future<bool> _onWillPop() async {
+    if (await _controller.canGoBack()) {
+      await _controller.goBack();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Moducbt'),
-        actions: <Widget>[
-          NavigationControls(webViewController: _controller),
-        ],
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Moducbt'),
+          actions: <Widget>[
+            NavigationControls(webViewController: _controller),
+          ],
+        ),
+        body: isLoading
+            ? const SplashScreen()
+            : WebViewWidget(controller: _controller),
       ),
-      body: isLoading
-          ? const SplashScreen()
-          : WebViewWidget(controller: _controller),
     );
   }
 }
