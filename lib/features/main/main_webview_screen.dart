@@ -17,7 +17,7 @@ class MainWebviewScreen extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         child: SizedBox(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height - 115,
             width: MediaQuery.of(context).size.width,
             child: WebViewWidget(controller: webViewController)),
       ),

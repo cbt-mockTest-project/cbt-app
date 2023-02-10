@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
 import 'package:moducbt/features/main/main_webview_screen.dart';
 import 'package:moducbt/features/main/widgets/app_bar.dart';
@@ -15,6 +16,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late final WebViewController _controller;
+  final InAppReview inAppReview = InAppReview.instance;
+  DateTime? currentBackPressTime;
   bool isLoading = true;
 
   @override
@@ -93,12 +96,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<bool> _onWillPop() async {
+    DateTime now = DateTime.now();
     if (await _controller.canGoBack()) {
       await _controller.goBack();
       return false;
-    } else {
-      return true;
     }
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('버튼을 한번 더 누르면 종료됩니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -106,16 +121,22 @@ class _MainScreenState extends State<MainScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text('Moducbt'),
-            actions: <Widget>[
-              NavigationControls(webViewController: _controller),
-            ],
-          ),
-          body: isLoading
-              ? const SplashScreen()
-              : MainWebviewScreen(webViewController: _controller)),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Moducbt'),
+          actions: <Widget>[
+            NavigationControls(webViewController: _controller),
+          ],
+        ),
+        body: isLoading
+            ? const SplashScreen()
+            : Stack(
+                children: [
+                  Positioned(
+                      child: MainWebviewScreen(webViewController: _controller)),
+                ],
+              ),
+      ),
     );
   }
 }
