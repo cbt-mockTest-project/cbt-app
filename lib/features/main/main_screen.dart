@@ -102,6 +102,10 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    _controller.reload();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -116,7 +120,17 @@ class _MainScreenState extends State<MainScreen> {
         ),
         body: isLoading
             ? const SplashScreen()
-            : WebViewWidget(controller: _controller),
+            : RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  child: SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: WebViewWidget(controller: _controller)),
+                ),
+              ),
       ),
     );
   }
