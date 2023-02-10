@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
+import 'package:moducbt/features/main/main_webview_screen.dart';
 import 'package:moducbt/features/main/widgets/app_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -32,8 +33,6 @@ class _MainScreenState extends State<MainScreen> {
 
     final WebViewController controller =
         WebViewController.fromPlatformCreationParams(params);
-
-    // #enddocregion platform_features
 
     controller
       ..setUserAgent('random')
@@ -102,36 +101,21 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  Future<void> _onRefresh() async {
-    _controller.reload();
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Moducbt'),
-          actions: <Widget>[
-            NavigationControls(webViewController: _controller),
-          ],
-        ),
-        body: isLoading
-            ? const SplashScreen()
-            : RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  child: SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      child: WebViewWidget(controller: _controller)),
-                ),
-              ),
-      ),
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: const Text('Moducbt'),
+            actions: <Widget>[
+              NavigationControls(webViewController: _controller),
+            ],
+          ),
+          body: isLoading
+              ? const SplashScreen()
+              : MainWebviewScreen(webViewController: _controller)),
     );
   }
 }
