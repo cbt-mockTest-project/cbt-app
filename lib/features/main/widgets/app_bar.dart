@@ -9,7 +9,7 @@ class NavigationControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const <Widget>[
+      children: <Widget>[
         // IconButton(
         //   icon: const Icon(Icons.arrow_back_ios),
         //   onPressed: () async {
@@ -36,10 +36,10 @@ class NavigationControls extends StatelessWidget {
         //     }
         //   },
         // ),
-        // IconButton(
-        //   icon: const Icon(Icons.replay),
-        //   onPressed: () => webViewController.reload(),
-        // ),
+        IconButton(
+          icon: const Icon(Icons.replay),
+          onPressed: () => webViewController.reload(),
+        ),
       ],
     );
   }

@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
           onPageStarted: (String url) {
             debugPrint('Page started loading: $url');
           },
-          onPageFinished: (String url) {
+          onPageFinished: (String url) async {
             debugPrint('Page finished loading: $url');
           },
           onWebResourceError: (WebResourceError error) {
@@ -91,7 +91,6 @@ class _MainScreenState extends State<MainScreen> {
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
-
     _controller = controller;
   }
 
@@ -133,7 +132,10 @@ class _MainScreenState extends State<MainScreen> {
             : Stack(
                 children: [
                   Positioned(
-                      child: MainWebviewScreen(webViewController: _controller)),
+                    child: MainWebviewScreen(
+                      webViewController: _controller,
+                    ),
+                  ),
                 ],
               ),
       ),
