@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.moducbt">
+    package="com.moducbt">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="모두CBT"
         android:name="${applicationName}"
