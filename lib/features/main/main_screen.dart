@@ -119,6 +119,10 @@ class _MainScreenState extends State<MainScreen> {
     return true;
   }
 
+  void _onTapAppBarText() {
+    _controller.loadRequest(Uri.parse('https://moducbt.com'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -126,7 +130,8 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Moducbt'),
+          title: GestureDetector(
+              onTap: _onTapAppBarText, child: const Text('Moducbt')),
           actions: <Widget>[
             NavigationControls(webViewController: _controller),
           ],
