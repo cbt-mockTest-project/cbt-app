@@ -56,7 +56,7 @@ class _MainScreenState extends State<MainScreen> {
           onPageFinished: (String url) async {
             debugPrint('Page finished loading: $url');
             if (url == 'https://www.buymeacoffee.com/moducbts') {
-              controller.setUserAgent('');
+              // controller.setUserAgent('');
             } else {
               controller.setUserAgent('random');
             }
