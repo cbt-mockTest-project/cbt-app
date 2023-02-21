@@ -6,10 +6,13 @@
             <data android:scheme="https" />
         </intent>
     </queries>
+     <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="모두CBT"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,7 +23,7 @@
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
+                 while the Flutter UI initializes. After that, thiDragHandles theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"

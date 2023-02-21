@@ -40,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
 
     bool checkAllowUrl({required String url}) {
       final List<String> allowUrls = [
+        'http://',
         'https://www.moducbt.com/',
         'https://moducbt.com/',
         'https://kauth.kakao.com/',
@@ -100,7 +101,8 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
       )
-      ..loadRequest(Uri.parse('https://moducbt.com'));
+      ..loadRequest(Uri.parse(
+          'http://10.0.2.2:3000/exam?e=25&q=1&r=false&t=2014년-1회차&c=산업안전기사실기%28필답형%29'));
 
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
