@@ -3,6 +3,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
 import 'package:moducbt/features/main/main_webview_screen.dart';
 import 'package:moducbt/features/main/widgets/app_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -37,7 +38,21 @@ class _MainScreenState extends State<MainScreen> {
     final WebViewController controller =
         WebViewController.fromPlatformCreationParams(params);
 
+    bool checkAllowUrl({required String url}) {
+      final List<String> allowUrls = [
+        'https://www.moducbt.com/',
+        'https://moducbt.com/',
+        'https://kauth.kakao.com/',
+        'https://accounts.kakao.com/',
+        'https://accounts.google.com/',
+      ];
+      return allowUrls.any((e) {
+        return url.startsWith(e);
+      });
+    }
+
     controller
+      ..setUserAgent('random')
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
@@ -55,11 +70,6 @@ class _MainScreenState extends State<MainScreen> {
           },
           onPageFinished: (String url) async {
             debugPrint('Page finished loading: $url');
-            if (url == 'https://www.buymeacoffee.com/moducbts') {
-              // controller.setUserAgent('');
-            } else {
-              controller.setUserAgent('random');
-            }
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('''
@@ -70,13 +80,15 @@ class _MainScreenState extends State<MainScreen> {
                 isForMainFrame: ${error.isForMainFrame}
           ''');
           },
-          onNavigationRequest: (NavigationRequest request) {
-            // if (request.url.startsWith('https://www.youtube.com/')) {
-            //   debugPrint('blocking navigation to ${request.url}');
-            //   return NavigationDecision.prevent;
-            // }
-            debugPrint('allowing navigation to ${request.url}');
-            return NavigationDecision.navigate;
+          onNavigationRequest: (NavigationRequest request) async {
+            if (checkAllowUrl(url: request.url)) {
+              return NavigationDecision.navigate;
+            }
+            final url = Uri.parse(request.url);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
+            return NavigationDecision.prevent;
           },
         ),
       )
