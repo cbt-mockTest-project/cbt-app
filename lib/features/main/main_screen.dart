@@ -3,6 +3,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
 import 'package:moducbt/features/main/main_webview_screen.dart';
 import 'package:moducbt/features/main/widgets/app_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -70,11 +71,14 @@ class _MainScreenState extends State<MainScreen> {
                 isForMainFrame: ${error.isForMainFrame}
           ''');
           },
-          onNavigationRequest: (NavigationRequest request) {
-            // if (request.url.startsWith('https://www.youtube.com/')) {
-            //   debugPrint('blocking navigation to ${request.url}');
-            //   return NavigationDecision.prevent;
-            // }
+          onNavigationRequest: (NavigationRequest request) async {
+            if (!request.url.startsWith('https://www.moducbt.com/')) {
+              final url = Uri.parse(request.url);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+              return NavigationDecision.prevent;
+            }
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
