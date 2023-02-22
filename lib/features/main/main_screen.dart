@@ -81,6 +81,11 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) async {
+            if (request.url.startsWith('https://accounts.google.com/')) {
+              controller.setUserAgent('random');
+            } else {
+              controller.setUserAgent('');
+            }
             if (checkAllowUrl(url: request.url)) {
               return NavigationDecision.navigate;
             }
