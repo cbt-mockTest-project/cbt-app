@@ -42,6 +42,7 @@ class _MainScreenState extends State<MainScreen> {
       final List<String> allowUrls = [
         'https://www.moducbt.com/',
         'https://moducbt.com/',
+        'https://api.moducbt.com/',
         'https://kauth.kakao.com/',
         'https://accounts.kakao.com/',
         'https://accounts.google.com/',
