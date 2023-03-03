@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
 import 'package:moducbt/features/main/main_webview_screen.dart';
-import 'package:moducbt/features/main/widgets/app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -145,26 +144,28 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: GestureDetector(
-              onTap: _onTapAppBarText, child: const Text('Moducbt')),
-          actions: <Widget>[
-            NavigationControls(webViewController: _controller),
-          ],
-        ),
-        body: isLoading
-            ? const SplashScreen()
-            : Stack(
-                children: [
-                  Positioned(
-                    child: MainWebviewScreen(
-                      webViewController: _controller,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          // appBar: AppBar(
+          //   title: GestureDetector(
+          //       onTap: _onTapAppBarText, child: const Text('Moducbt')),
+          //   actions: <Widget>[
+          //     NavigationControls(webViewController: _controller),
+          //   ],
+          // ),
+          body: isLoading
+              ? const SplashScreen()
+              : Stack(
+                  children: [
+                    Positioned(
+                      child: MainWebviewScreen(
+                        webViewController: _controller,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }
