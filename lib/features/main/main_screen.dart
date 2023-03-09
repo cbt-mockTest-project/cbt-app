@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -83,6 +84,11 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) async {
+            if (request.url.startsWith('https://accounts.google.com/')) {
+              controller.setUserAgent('random');
+            } else {
+              controller.setUserAgent('');
+            }
             if (checkAllowUrl(url: request.url)) {
               return NavigationDecision.navigate;
             }
@@ -95,16 +101,15 @@ class _MainScreenState extends State<MainScreen> {
         ),
       )
       ..addJavaScriptChannel(
-        'Toaster',
+        'Share',
         onMessageReceived: (JavaScriptMessage message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
+          Share.share(message.message);
         },
       )
-      ..loadRequest(Uri.parse('https://moducbt.com'));
+      ..loadRequest(Uri.parse('http://172.30.1.3:3000'));
 
     if (controller.platform is AndroidWebViewController) {
+      Share.share('https://moducbt.com/question/737');
       AndroidWebViewController.enableDebugging(true);
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
@@ -144,13 +149,6 @@ class _MainScreenState extends State<MainScreen> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          // appBar: AppBar(
-          //   title: GestureDetector(
-          //       onTap: _onTapAppBarText, child: const Text('Moducbt')),
-          //   actions: <Widget>[
-          //     NavigationControls(webViewController: _controller),
-          //   ],
-          // ),
           body: isLoading
               ? const SplashScreen()
               : Stack(
