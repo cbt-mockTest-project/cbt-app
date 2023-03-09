@@ -106,10 +106,9 @@ class _MainScreenState extends State<MainScreen> {
           Share.share(message.message);
         },
       )
-      ..loadRequest(Uri.parse('http://172.30.1.3:3000'));
+      ..loadRequest(Uri.parse('https://moducbt.com'));
 
     if (controller.platform is AndroidWebViewController) {
-      Share.share('https://moducbt.com/question/737');
       AndroidWebViewController.enableDebugging(true);
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
