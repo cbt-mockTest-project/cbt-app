@@ -55,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
         'https://accounts.kakao.com/',
         'https://logins.daum.net/',
         'https://accounts.google.com/',
-        'https://accounts.google.co.kr/'
+        'https://accounts.google.co.kr/',
       ];
       return allowUrls.any((e) {
         return url.startsWith(e);
@@ -96,8 +96,14 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) async {
+            debugPrint('eungwang: ${request.url}');
+            if (request.url.startsWith('kakaotalk://inappbrowser')) {
+              final url = Uri.parse(request.url);
+              await launchUrl(url);
+              return NavigationDecision.prevent;
+            }
             if (request.url.startsWith('https://accounts.google.com/')) {
-              controller.setUserAgent('random');
+              // controller.setUserAgent('random');
             } else {
               controller.setUserAgent(randomUserAgent());
             }
@@ -106,7 +112,7 @@ class _MainScreenState extends State<MainScreen> {
             }
             final url = Uri.parse(request.url);
             if (await canLaunchUrl(url)) {
-              await launchUrl(url, mode: LaunchMode.externalApplication);
+              await launchUrl(url, mode: LaunchMode.platformDefault);
             }
             return NavigationDecision.prevent;
           },
