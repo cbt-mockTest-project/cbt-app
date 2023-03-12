@@ -103,7 +103,7 @@ class _MainScreenState extends State<MainScreen> {
               return NavigationDecision.prevent;
             }
             if (request.url.startsWith('https://accounts.google.com/')) {
-              // controller.setUserAgent('random');
+              controller.setUserAgent('random');
             } else {
               controller.setUserAgent(randomUserAgent());
             }
