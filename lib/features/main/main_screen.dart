@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
@@ -7,6 +9,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:share_plus/share_plus.dart';
+
+List<String> mobileUserAgents = [
+  // 모바일 User-Agent 문자열 리스트
+  'Mozilla/5.0 (Linux; Android 11; SM-G970F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36',
+  'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36',
+];
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -54,8 +62,12 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
 
+    String randomUserAgent() {
+      return mobileUserAgents[Random().nextInt(mobileUserAgents.length)];
+    }
+
     controller
-      ..setUserAgent('random')
+      ..setUserAgent(randomUserAgent())
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
@@ -87,7 +99,7 @@ class _MainScreenState extends State<MainScreen> {
             if (request.url.startsWith('https://accounts.google.com/')) {
               controller.setUserAgent('random');
             } else {
-              controller.setUserAgent('');
+              controller.setUserAgent(randomUserAgent());
             }
             if (checkAllowUrl(url: request.url)) {
               return NavigationDecision.navigate;
