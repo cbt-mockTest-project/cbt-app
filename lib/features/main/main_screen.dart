@@ -96,7 +96,6 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) async {
-            debugPrint('eungwang: ${request.url}');
             if (request.url.startsWith('kakaotalk://inappbrowser')) {
               final url = Uri.parse(request.url);
               await launchUrl(url);
@@ -112,7 +111,8 @@ class _MainScreenState extends State<MainScreen> {
             }
             final url = Uri.parse(request.url);
             if (await canLaunchUrl(url)) {
-              await launchUrl(url, mode: LaunchMode.platformDefault);
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+              return NavigationDecision.prevent;
             }
             return NavigationDecision.prevent;
           },
