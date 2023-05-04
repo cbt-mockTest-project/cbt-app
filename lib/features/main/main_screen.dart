@@ -9,6 +9,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 
 List<String> mobileUserAgents = [
   // 모바일 User-Agent 문자열 리스트
@@ -28,6 +29,20 @@ class _MainScreenState extends State<MainScreen> {
   final InAppReview inAppReview = InAppReview.instance;
   DateTime? currentBackPressTime;
   bool isLoading = true;
+  static const _platformChannel = MethodChannel('com.example.webview_intents');
+  Future<void> _handleIntent(String intentUrl) async {
+    try {
+      final bool result =
+          await _platformChannel.invokeMethod('launchIntent', intentUrl);
+      if (!result) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('인텐트를 실행할 수 없습니다.')));
+      }
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('오류: ${e.message}')));
+    }
+  }
 
   @override
   void initState() {
@@ -96,6 +111,15 @@ class _MainScreenState extends State<MainScreen> {
           ''');
           },
           onNavigationRequest: (NavigationRequest request) async {
+            if (request.url.startsWith('intent://')) {
+              try {
+                _handleIntent(request.url);
+                return NavigationDecision.prevent;
+              } catch (e) {
+                debugPrint('Error launching KakaoTalk app: $e');
+              }
+              return NavigationDecision.prevent;
+            }
             if (request.url.startsWith('kakaotalk://inappbrowser')) {
               final url = Uri.parse(request.url);
               await launchUrl(url);
