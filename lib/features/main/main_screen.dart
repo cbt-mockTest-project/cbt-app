@@ -3,13 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
-import 'package:moducbt/features/main/main_webview_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:bootpay_webview_flutter/bootpay_webview_flutter.dart';
 
 List<String> mobileUserAgents = [
   // 모바일 User-Agent 문자열 리스트
@@ -25,7 +23,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late final WebViewController _controller;
+  late final WebViewController controller;
   final InAppReview inAppReview = InAppReview.instance;
   DateTime? currentBackPressTime;
   bool isLoading = true;
@@ -49,17 +47,6 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
 
     late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
-    }
-
-    final WebViewController controller =
-        WebViewController.fromPlatformCreationParams(params);
 
     bool checkAllowUrl({required String url}) {
       final List<String> allowUrls = [
@@ -81,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
       return mobileUserAgents[Random().nextInt(mobileUserAgents.length)];
     }
 
-    controller
+    controller = WebViewController()
       ..setUserAgent(randomUserAgent())
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -155,13 +142,12 @@ class _MainScreenState extends State<MainScreen> {
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
-    _controller = controller;
   }
 
   Future<bool> _onWillPop() async {
     DateTime now = DateTime.now();
-    if (await _controller.canGoBack()) {
-      await _controller.goBack();
+    if (await controller.canGoBack()) {
+      await controller.goBack();
       return false;
     }
     if (currentBackPressTime == null ||
@@ -180,7 +166,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onTapAppBarText() {
-    _controller.loadRequest(Uri.parse('https://moducbt.com'));
+    controller.loadRequest(Uri.parse('https://moducbt.com'));
   }
 
   @override
@@ -189,19 +175,10 @@ class _MainScreenState extends State<MainScreen> {
       onWillPop: _onWillPop,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.white,
-          body: isLoading
-              ? const SplashScreen()
-              : Stack(
-                  children: [
-                    Positioned(
-                      child: MainWebviewScreen(
-                        webViewController: _controller,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
+            backgroundColor: Colors.white,
+            body: isLoading
+                ? const SplashScreen()
+                : WebViewWidget(controller: controller)),
       ),
     );
   }

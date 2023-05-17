@@ -33,6 +33,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bootpay_webview_flutter:
+    dependency: "direct main"
+    description:
+      name: bootpay_webview_flutter
+      sha256: "0a89d3bb869b856238d9775ada926ad9537fb4a927bf8155e89876eb575dfcd1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
+  bootpay_webview_flutter_android:
+    dependency: transitive
+    description:
+      name: bootpay_webview_flutter_android
+      sha256: "5b60e7d02df8986ae297458dc0e771e4496d8fafcd56c50246904e85c9a4a37b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.1"
+  bootpay_webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: bootpay_webview_flutter_platform_interface
+      sha256: "109fbac439b78d1c129985ab8880b64fd746884b338ed42b51e5428b1b21be78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
+  bootpay_webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: bootpay_webview_flutter_wkwebview
+      sha256: "03e271a0c8e6dd6c6fb594f27e72dc54852f873a1bab57acc76b80cf44c25379"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
   characters:
     dependency: transitive
     description:
