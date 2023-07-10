@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:moducbt/features/main/main_splash_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:share_plus/share_plus.dart';
@@ -42,14 +44,29 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  PackageInfo _packageInfo = PackageInfo(
+    appName: '',
+    packageName: '',
+    version: '',
+    buildNumber: '',
+    buildSignature: '',
+    installerStore: '',
+  );
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-
-    late final PlatformWebViewControllerCreationParams params;
-
+    _initPackageInfo();
     bool checkAllowUrl({required String url}) {
       final List<String> allowUrls = [
+        'http://172.30.1.9',
         'https://www.moducbt.com/',
         'https://moducbt.com/',
         'https://api.moducbt.com/',
@@ -135,7 +152,32 @@ class _MainScreenState extends State<MainScreen> {
           Share.share(message.message);
         },
       )
-      ..loadRequest(Uri.parse('https://moducbt.com'));
+      ..addJavaScriptChannel(
+        'PackageInfo',
+        onMessageReceived: (JavaScriptMessage message) async {
+          if (message.message == "getPackageInfo") {
+            final packageInfo = {
+              "appName": _packageInfo.appName,
+              "version": _packageInfo.version,
+              "buildNumber": _packageInfo.buildNumber,
+            };
+            String packageInfoJson = jsonEncode(packageInfo);
+            controller.runJavaScript('window.appInfoChanged($packageInfoJson)');
+          }
+        },
+      )
+      ..addJavaScriptChannel('fileChooser',
+          onMessageReceived: (JavaScriptMessage message) async {
+        final ImagePicker _picker = ImagePicker();
+        final XFile? imageFile =
+            await _picker.pickImage(source: ImageSource.gallery);
+        if (imageFile != null) {
+          final Uint8List bytes = await imageFile.readAsBytes();
+          final String base64 = base64Encode(bytes.buffer.asUint8List());
+          controller.runJavaScript('window.uploadFile("$base64")');
+        }
+      })
+      ..loadRequest(Uri.parse('http://172.30.1.9:3000/exam/write'));
 
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
@@ -163,10 +205,6 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return true;
-  }
-
-  void _onTapAppBarText() {
-    controller.loadRequest(Uri.parse('https://moducbt.com'));
   }
 
   @override
